@@ -11,7 +11,10 @@ class UserService {
     public async getOne(payload: any) {
         const { userId } = payload
         const user = await prisma.user.findUnique({
-            where: {userId}
+            where: {userId},
+            include: {
+                organisations: true
+            }
         })
 
         const response = responseUtils.buildResponse({ response: user, message: "Get user, successfull"})

@@ -13,6 +13,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
 model User {
   userId      Int      @id @default(autoincrement())
   firstName   String
@@ -27,7 +28,7 @@ model User {
 model Organisation {
   orgId Int @id @default(autoincrement())
   name String
-  description String
-  users User[]
-  userId Int @unique 
+  description String?
+  user User  @relation(fields: [userId], references: [userId])
+  userId Int 
 }

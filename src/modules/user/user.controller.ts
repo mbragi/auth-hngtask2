@@ -35,7 +35,7 @@ class UserControllers implements controller {
     public async getOne(req: Request, res: Response, next: NextFunction) {
         try {
             const { userId } = req.params
-            const response = await userService.getOne({ userId })
+            const response = await userService.getOne({ userId: Number(userId) })
             res.status(200).json(response)
         } catch (error) {
             next(error)

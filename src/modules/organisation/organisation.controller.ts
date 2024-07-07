@@ -18,22 +18,48 @@ class OrgControllers implements controller {
         })
 
         this.router.get(`${this.path}/`, verifyToken, this.getAll)
-        this.router.post(`${this.path}/:orgId`, verifyToken, this.getOne)
+        this.router.post(`${this.path}/`, verifyToken, this.create)
+        this.router.post(`${this.path}/:orgId/user`, verifyToken, this.createUser)
+        this.router.get(`${this.path}/:orgId`, verifyToken, this.getOne)
     }
 
     public async getAll(req: Request, res: Response, next: NextFunction) {
         try {
-            // const response = await organisationService.getAll(req.body)
-            res.status(200).json({msg: "Gba ko je"})
+            const { userId } = (req as any).user
+            const response = await organisationService.getAll({ userId: Number(userId)})
+            res.status(200).json(response)
         } catch (error) {
             next(error)
         }
-
     }
 
     public async getOne(req: Request, res: Response, next: NextFunction) {
         try {
-            res.status(200).json({msg: "Gba ko je"})
+            const { orgId } = req.params
+            const { userId } = (req as any).user
+            const response = await organisationService.getOne({ orgId: Number(orgId)})
+            res.status(200).json(response)
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    public async create(req: Request, res: Response, next: NextFunction) {
+        try {
+            const {userId} = (req as any).user
+            const response = await organisationService.create({ userId: Number(userId), ...req.body})
+            res.status(200).json(response)
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    public async createUser(req: Request, res: Response, next: NextFunction) {
+        try {
+            const {userId} = req.body
+            const { orgId } = req.params
+            const response = await organisationService.createUser({ orgId: Number(orgId), ...req.body})
+            res.status(200).json(response)
         } catch (error) {
             next(error)
         }
