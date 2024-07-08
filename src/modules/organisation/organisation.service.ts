@@ -111,9 +111,11 @@ class OrganisationService {
             }
         })
 
+        if(!organisation) {
+            throw new HttpException(400, "Client error", "Bad request")
+        }
+
         // const response = responseUtils.buildResponse({ response: organisation, message: "User added to organisation successfully" })
-
-
         return { status: "Success", message: "User added to organisation successfully" }
     }
 }
