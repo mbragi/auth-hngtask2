@@ -15,20 +15,20 @@ datasource db {
 
 
 model User {
-  userId      Int      @id @default(autoincrement())
+  userId      String   @id @default(cuid())
   firstName   String
   lastName String
   email   String   @unique
   password    String
   phone String
+  createdAt DateTime @default(now())
   organisations Organisation[]
-  
 }
 
 model Organisation {
-  orgId Int @id @default(autoincrement())
+  orgId String   @id @default(cuid())
   name String
   description String?
-  user User  @relation(fields: [userId], references: [userId])
-  userId Int 
+  creatorId String?
+  users User[]
 }

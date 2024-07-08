@@ -9,54 +9,93 @@ class OrganisationService {
     constructor() { }
 
     public async getOne(payload: any) {
-        const organisations = await prisma.organisation.findUnique({
-            where: { orgId: payload.orgId }
+        const organisations = await prisma.organisation.findFirst({
+            where: { 
+                orgId: payload.orgId,
+                AND: [
+                    {
+                        OR: [
+                            {creatorId: payload.userId},
+                            {users: {some: { userId: payload.userId }}}
+                        ]
+                    }
+                ]
+             },
+
+             select: {
+                orgId: true,
+                name: true,
+                description: true
+             }
+
+            //  include: {
+            //     users: true
+            //  }
         })
 
         if (!organisations) {
             throw new HttpException(400, "Client error", "Bad request")
         }
-        return organisations
+
+        const response = responseUtils.buildResponse({ response: organisations, message: "get organisation successfully" })
+
+        return response
     }
 
     public async getAll(payload: any) {
+
+        console.log(payload);
+
         const organisation = await prisma.organisation.findMany({
-            where: { userId: payload.userId }
+            where: {
+                OR: [
+                    {creatorId: payload.userId},
+                    {users: {some: { userId: payload.userId }}}
+                ]
+            }
         })
 
-        const response = responseUtils.buildResponse({ response: organisation, message: "get organisation successfully" })
+      
+        const response = responseUtils.buildResponse({ response: organisation, message: "get organisations successfully" })
 
         return response
     }
 
 
     public async create(payload: any) {
-        const { name, userId } = payload
-        console.log(payload);
+        const { name, userId, description } = payload
+        // console.log(payload);
 
         if (!name || !userId) {
             throw new HttpException(400, "Client error", "Bad request")
         }
+
         const organisation = await prisma.organisation.create({
             data: {
                 name,
-                user: {
-                    connect: {
-                        userId
-                    }
+                description,
+                creatorId: userId,
+                users: {
+                    connect: [{userId}]
                 }
+            },
+
+            select: {
+                orgId: true,
+                name: true,
+                description: true
             }
+
         })
 
-
-
-        const response = responseUtils.buildResponse({ response: organisation, message: "Organisation created successfully" })
+        const response = responseUtils.buildResponse({ response: organisation, message: "Organisation created successfully" }) 
+        // edit
 
         return response
     }
 
     public async createUser(payload: any) {
-        const { name, orgId, userId } = payload
+        const { orgId, userId } = payload
         console.log(payload);
 
         if (!userId || !orgId) {
@@ -64,13 +103,18 @@ class OrganisationService {
         }
 
         const organisation = await prisma.organisation.update({
-            where: { orgId },
+            where: {orgId},
             data: {
-                userId: Number(userId)
+                users: {
+                    connect: [{userId: payload.userId}]
+                }
             }
         })
 
-        return organisation
+        // const response = responseUtils.buildResponse({ response: organisation, message: "User added to organisation successfully" })
+
+
+        return { status: "Success", message: "User added to organisation successfully" }
     }
 }
 

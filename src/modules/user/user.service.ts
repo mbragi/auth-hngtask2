@@ -9,9 +9,12 @@ class UserService {
     constructor() {}
 
     public async getOne(payload: any) {
-        const { userId } = payload
-        const user = await prisma.user.findUnique({
-            where: {userId},
+        const { userId, user: currentUser, orgId } = payload
+        const user = await prisma.user.findFirst({
+            where: {
+                userId: currentUser,
+                
+            },
             include: {
                 organisations: true
             }

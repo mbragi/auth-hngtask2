@@ -20,7 +20,7 @@ class AuthService {
             where: { email }
         })
         // console.log(userExists)
-        if (userExists) throw new HttpException(400, "user Already exist", "Bad Request")
+        if (userExists) throw new HttpException(400, "Registration unsuccessful", "Bad Request")
 
         const hashPassword = await this.bcrypt.hashPassword({ password, saltRounds: 12 })
 
@@ -36,15 +36,28 @@ class AuthService {
                 password: payload.password,
                 phone: payload.phone,
                 organisations: {
-                    create: {
-                        name: `${payload.firstName}'s organisation`
-                    }
+                   create: {
+                    name: `${payload.firstName}'s organisation`
+                   }
                 }
+            },
+
+            include: {
+                organisations: true
             }
         })
+
+        const organisation =  await prisma.organisation.update({
+            where: { orgId: user.organisations[0].orgId },
+            data: { creatorId: user.userId }
+        });
+
+       console.log(organisation);
+       
+       
         console.log("new user created", user);
 
-        const accessToken = generateToken(user.userId, user.email)
+        const accessToken = generateToken(user.userId, user.email, user.organisations[0].orgId)
 
         const response = responseUtils.buildResponse({ response: { accessToken, user }, message: "Registeration Successfull" })
 
@@ -59,6 +72,9 @@ class AuthService {
 
         const userExists = await prisma.user.findUnique({
             where: { email },
+            include: {
+                organisations: true
+            }
         })
 
         if (!userExists) throw new HttpException(401, "User not found", "Bad request")
@@ -67,7 +83,7 @@ class AuthService {
 
         if (!isPasswordValid) throw new HttpException(401, "Authentication failed", "Bad request")
 
-        const accessToken = generateToken(userExists.userId, userExists.email)
+        const accessToken = generateToken(userExists.userId, userExists.email, userExists.organisations[0].orgId)
 
         const response = responseUtils.buildResponse({ response: { accessToken, user: userExists }, message: "Login successful" })
 

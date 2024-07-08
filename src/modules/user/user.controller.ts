@@ -23,7 +23,7 @@ class UserControllers implements controller {
 
     public async getAll(req: Request, res: Response, next: NextFunction) {
         try {
-            const { userId, email } = (req as any).user
+            const { userId, email, orgId } = (req as any).user
             // const response = await userService.getAll({userId, email})
             res.status(200).json()
         } catch (error) {
@@ -35,7 +35,8 @@ class UserControllers implements controller {
     public async getOne(req: Request, res: Response, next: NextFunction) {
         try {
             const { userId } = req.params
-            const response = await userService.getOne({ userId: Number(userId) })
+            const { userId: user, email, orgId } = (req as any).user
+            const response = await userService.getOne({ userId: userId, user, orgId })
             res.status(200).json(response)
         } catch (error) {
             next(error)
