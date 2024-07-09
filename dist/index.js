@@ -22,8 +22,8 @@ class App {
     }
     initControllers(constrollers) {
         constrollers.forEach((controller) => {
-            console.log(`/api/hngtask2${controller.path}`);
-            this.app.use(`/api/hngtask2`, controller.router);
+            console.log(`/api${controller.path}`);
+            this.app.use(`/api`, controller.router);
         });
     }
     initMiddlewares() {
