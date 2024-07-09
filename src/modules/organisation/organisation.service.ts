@@ -46,17 +46,19 @@ class OrganisationService {
 
         console.log(payload);
 
-        const organisation = await prisma.organisation.findMany({
+        const organisations = await prisma.organisation.findMany({
             where: {
                 OR: [
-                    {creatorId: payload.userId},
+                    {creatorId: payload.userId}, 
                     {users: {some: { userId: payload.userId }}}
                 ]
             }
         })
 
-      
-        const response = responseUtils.buildResponse({ response: organisation, message: "get organisations successfully" })
+        if (!organisations) {
+            throw new HttpException(400, "Client error", "Bad request")
+        }
+        const response = {status: "Success", message: "get organisations successfully", response: organisations }
 
         return response
     }
@@ -87,6 +89,10 @@ class OrganisationService {
             }
 
         })
+
+        if(!organisation) {
+            throw new HttpException(400, "Client error", "Bad request")
+        }
 
         const response = responseUtils.buildResponse({ response: organisation, message: "Organisation created successfully" }) 
         // edit
