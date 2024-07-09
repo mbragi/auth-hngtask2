@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken';
 import { generateToken } from '../shared/utils/jwt.utils';
-import { envs } from '../shared/config/env.config';
 
 describe('JWT Utils', () => {
     it('should generate a token with correct user details and expiration time', () => {
