@@ -18,7 +18,7 @@ class App {
 
 
     public listen() {
-        this.app.listen(4000, () => {
+        this.app.listen(process.env.PORT || 4000, () => {
             console.log("app is listening on port 400");
         })
     }
