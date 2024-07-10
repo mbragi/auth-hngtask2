@@ -7,7 +7,7 @@ dotenv.config()
 
 
 class App {
-    private app: Application;
+    public app: Application;
 
     constructor(constrollers: controller[]) {
         this.app = express()
@@ -17,7 +17,7 @@ class App {
     }
 
 
-    public listen() {
+    public listen(port?: number, callback?: () => void) {
         this.app.listen(process.env.PORT || 4000, () => {
             console.log("app is listening on port 400");
         })
