@@ -52,7 +52,14 @@ class OrganisationService {
                     {creatorId: payload.userId}, 
                     {users: {some: { userId: payload.userId }}}
                 ]
-            }
+            },
+            
+            select: {
+                orgId: true,
+                name: true,
+                description: true
+             }
+
         })
 
         if (!organisations) {
