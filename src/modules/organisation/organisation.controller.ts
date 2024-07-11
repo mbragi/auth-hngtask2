@@ -2,6 +2,8 @@ import { Request, Response, NextFunction, Router } from "express";
 import { controller } from "../../shared/types";
 import organisationService from "./organisation.service";
 import { verifyToken } from "../../middleware/auth.middleware";
+import validate from "../../shared/utils/validator.util";
+import { orgValidationSchema } from "../../shared/validation/organisation.validation";
 
 class OrgControllers implements controller {
     public path: string = '/organisations';
@@ -18,7 +20,7 @@ class OrgControllers implements controller {
         })
 
         this.router.get(`${this.path}/`, verifyToken, this.getAll)
-        this.router.post(`${this.path}/`, verifyToken, this.create)
+        this.router.post(`${this.path}/`, validate(orgValidationSchema), verifyToken, this.create)
         this.router.patch(`${this.path}/:orgId/users`, verifyToken, this.createUser)
         this.router.get(`${this.path}/:orgId`, verifyToken, this.getOne)
     }
