@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import { StatusCodes } from "http-status-codes";
 import * as jwt from "jsonwebtoken"
 
 export const verifyToken = (req: Request, res: Response, next: NextFunction) => {
@@ -20,7 +21,9 @@ export const verifyToken = (req: Request, res: Response, next: NextFunction) => 
         next()
     } catch (error: any) {
         res.status(401).json({
-            message: 'Unauthorized: Unable to authenticate',
+            status: "Unauthorized",
+            message: 'Authentication failed',
+            statusCode: StatusCodes.UNAUTHORIZED
         });
     }
 }
