@@ -15,6 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const organisation_service_1 = __importDefault(require("./organisation.service"));
 const auth_middleware_1 = require("../../middleware/auth.middleware");
+const validator_util_1 = __importDefault(require("../../shared/utils/validator.util"));
+const organisation_validation_1 = require("../../shared/validation/organisation.validation");
 class OrgControllers {
     constructor() {
         this.path = '/organisations';
@@ -26,7 +28,7 @@ class OrgControllers {
             res.status(200).json({ message: "Org Service is working" });
         });
         this.router.get(`${this.path}/`, auth_middleware_1.verifyToken, this.getAll);
-        this.router.post(`${this.path}/`, auth_middleware_1.verifyToken, this.create);
+        this.router.post(`${this.path}/`, (0, validator_util_1.default)(organisation_validation_1.orgValidationSchema), auth_middleware_1.verifyToken, this.create);
         this.router.patch(`${this.path}/:orgId/users`, auth_middleware_1.verifyToken, this.createUser);
         this.router.get(`${this.path}/:orgId`, auth_middleware_1.verifyToken, this.getOne);
     }

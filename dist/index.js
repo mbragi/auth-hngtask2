@@ -15,8 +15,8 @@ class App {
         this.initControllers(constrollers);
         this.initErrorHandlers();
     }
-    listen() {
-        this.app.listen(4000, () => {
+    listen(port, callback) {
+        this.app.listen(process.env.PORT || 4000, () => {
             console.log("app is listening on port 400");
         });
     }

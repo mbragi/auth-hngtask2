@@ -62,7 +62,7 @@ class OrganisationService {
             if (!organisations) {
                 throw new httpException_exception_1.default(400, "Client error", "Bad request");
             }
-            const response = { status: "Success", message: "get organisations successfully", response: organisations };
+            const response = { status: "Success", message: "get organisations successfully", organisations };
             return response;
         });
     }

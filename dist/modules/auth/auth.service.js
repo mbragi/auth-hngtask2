@@ -49,8 +49,11 @@ class AuthService {
                 },
                 include: {
                     organisations: true
-                }
+                },
             });
+            if (!user) {
+                throw new httpException_exception_1.default(422, "Registration unsuccessful", "Bad Request");
+            }
             const organisation = yield prisma.organisation.update({
                 where: { orgId: user.organisations[0].orgId },
                 data: { creatorId: user.userId }
@@ -58,7 +61,14 @@ class AuthService {
             console.log(organisation);
             console.log("new user created", user);
             const accessToken = (0, jwt_utils_1.generateToken)(user.userId, user.email, user.organisations[0].orgId);
-            const response = response_utils_1.default.buildResponse({ response: { accessToken, user }, message: "Registeration Successfull" });
+            const resUser = {
+                userId: user.userId,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+                phone: user.phone
+            };
+            const response = response_utils_1.default.buildResponse({ response: { accessToken, user: resUser }, message: "Registeration Successfull" });
             return response;
         });
     }
@@ -74,12 +84,19 @@ class AuthService {
                 }
             });
             if (!userExists)
-                throw new httpException_exception_1.default(401, "User not found", "Bad request");
+                throw new httpException_exception_1.default(401, "Authentication failed", "Bad request");
             const isPasswordValid = yield this.bcrypt.compare(password, userExists.password);
             if (!isPasswordValid)
                 throw new httpException_exception_1.default(401, "Authentication failed", "Bad request");
             const accessToken = (0, jwt_utils_1.generateToken)(userExists.userId, userExists.email, userExists.organisations[0].orgId);
-            const response = response_utils_1.default.buildResponse({ response: { accessToken, user: userExists }, message: "Login successful" });
+            const resUser = {
+                userId: userExists.userId,
+                firstName: userExists.firstName,
+                lastName: userExists.lastName,
+                email: userExists.email,
+                phone: userExists.phone
+            };
+            const response = response_utils_1.default.buildResponse({ response: { accessToken, user: resUser }, message: "Login successful" });
             return response;
         });
     }

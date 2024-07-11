@@ -24,6 +24,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.verifyToken = void 0;
+const http_status_codes_1 = require("http-status-codes");
 const jwt = __importStar(require("jsonwebtoken"));
 const verifyToken = (req, res, next) => {
     var _a;
@@ -44,7 +45,9 @@ const verifyToken = (req, res, next) => {
     }
     catch (error) {
         res.status(401).json({
-            message: 'Unauthorized: Unable to authenticate',
+            status: "Unauthorized",
+            message: 'Authentication failed',
+            statusCode: http_status_codes_1.StatusCodes.UNAUTHORIZED
         });
     }
 };
